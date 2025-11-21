@@ -1,4 +1,5 @@
 import asyncHandler from 'express-async-handler';
+import Booking from '../models/Booking.js';
 
 // @desc    Initiate payment
 // @route   POST /api/payments/initiate
@@ -36,8 +37,23 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     throw new Error('paymentId and bookingId are required');
   }
 
-  // Simulate 2–3 second delay
+  // Simulate 2 second delay
   await new Promise(resolve => setTimeout(resolve, 2000));
+
+  // Update booking in database
+  const updatedBooking = await Booking.findByIdAndUpdate(
+    bookingId,
+    {
+      paymentStatus: "success",
+      paymentId,
+    },
+    { new: true }
+  );
+
+  if (!updatedBooking) {
+    res.status(404);
+    throw new Error("Booking not found");
+  }
 
   res.status(200).json({
     success: true,
