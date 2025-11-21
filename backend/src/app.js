@@ -11,6 +11,7 @@ app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5173",
   "https://national-park-booking-system.vercel.app",
+  "https://national-park-booking-system-npal052ab.vercel.app/",
 ];
 
 app.use(
