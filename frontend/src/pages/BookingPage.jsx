@@ -6,6 +6,7 @@ import { showError } from "../utils/toast";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { Icons } from "../constants/icons";
+import Loader from "../components/Loader";
 
 const BookingPage = () => {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ const BookingPage = () => {
     setTickets,
     safariTimings,
     setSafariTimings,
+    loading,
+    setLoading,
   } = useBooking();
 
   useEffect(() => {
@@ -24,12 +27,19 @@ const BookingPage = () => {
   }, []);
 
   const loadData = async () => {
+    setLoading(true);
     try {
-      const [tRes, sRes] = await Promise.all([getTickets(), getSafariTimings()]);
-      setTickets(tRes.data.data || []);
-      setSafariTimings(sRes.data.data || []);
-    } catch {
+      const [ticketRes, timingRes] = await Promise.all([
+        getTickets(),
+        getSafariTimings(),
+      ]);
+
+      setTickets(ticketRes.data.data || []);
+      setSafariTimings(timingRes.data.data || []);
+    } catch (err) {
       showError("Failed to load data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,6 +63,8 @@ const BookingPage = () => {
     if (!bookingData.safariTime) return showError("Select safari time");
     navigate("/summary");
   };
+
+  if (loading) return <Loader message="Loading..." />;
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
