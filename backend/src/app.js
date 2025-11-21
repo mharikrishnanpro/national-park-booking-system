@@ -7,7 +7,19 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://national-park-booking-system.vercel.app",
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Health check
 app.get("/api/health", (req, res) => {
